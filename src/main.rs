@@ -2,8 +2,11 @@ use std::io::{self, Write};
 use std::thread;
 use std::time::Duration;
 
+use macroquad::prelude::*;
+
 const WIDTH: usize = 50;
 const HEIGHT: usize = 25;
+const CELL_SIZE: f32 = 20.0;
 
 struct Grid {
     cells: Vec<Vec<bool>>,
@@ -77,7 +80,7 @@ impl Grid {
     }
 
     // Afficher la grille
-    fn display(&self) {
+    fn display_console(&self) {
         // Effacer l'écran (ANSI escape codes)
         print!("\x1B[2J\x1B[1;1H");
         
@@ -96,16 +99,44 @@ impl Grid {
         
         io::stdout().flush().unwrap();
     }
+
+    fn draw(&self) {
+        for y in 0..HEIGHT {
+            for x in 0..WIDTH {
+                if self.cells[y][x] {
+                    draw_rectangle(
+                        x as f32 * CELL_SIZE,
+                        y as f32 * CELL_SIZE,
+                        CELL_SIZE - 1.0,
+                        CELL_SIZE - 1.0,
+                        WHITE,
+                    );
+                }
+            }
+        }
+    }
 }
 
-fn main() {
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Jeu de la vie de Conway".to_owned(),
+        window_width: (WIDTH as f32 * CELL_SIZE) as i32,
+        window_height: (HEIGHT as f32 * CELL_SIZE) as i32,
+        ..Default::default()
+    }
+}
+
+#[macroquad::main(window_conf)]
+async fn main() {
     let mut grid = Grid::new();
     grid.randomize();
     
     // Boucle principale
     loop {
-        grid.display();
+        clear_background(BLACK);
+        grid.draw();
         grid.next_generation();
         thread::sleep(Duration::from_millis(100));
+        next_frame().await;
     }
 }
