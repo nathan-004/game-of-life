@@ -2,9 +2,9 @@ use std::io::{self, Write};
 
 use macroquad::prelude::*;
 
-const WIDTH: usize = 50;
-const HEIGHT: usize = 25;
-const CELL_SIZE: f32 = 20.0;
+const WIDTH: usize = 150;
+const HEIGHT: usize = 75;
+const CELL_SIZE: f32 = 10.0;
 const GRID_OFFSET_Y: f32 = 100.0;
 
 struct Grid {
@@ -175,6 +175,18 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::KpSubtract) {
+            // Diminuer la vitesse (augmenter le délai)
+            speed += 1;
+        }
+
+        if is_key_pressed(KeyCode::Up) {
+            // Augmenter la vitesse (diminuer le délai)
+            if speed > 1 {
+                speed -= 1;
+            }
+        }
+
+        if is_key_pressed(KeyCode::Down) {
             // Diminuer la vitesse (augmenter le délai)
             speed += 1;
         }
