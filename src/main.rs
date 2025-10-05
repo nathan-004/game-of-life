@@ -108,6 +108,7 @@ impl Grid {
     }
 
     fn draw(&self) {
+        draw_rectangle_lines(0.0, GRID_OFFSET_Y, CELL_SIZE * WIDTH as f32, CELL_SIZE * HEIGHT as f32, 5.0, WHITE);
         for y in 0..HEIGHT {
             for x in 0..WIDTH {
                 if self.cells[y][x] {
@@ -139,7 +140,7 @@ async fn main() {
     let mut grid = Grid::new();
     let mut paused = true;
     let mut frame_count = 0;
-    let speed = 6; // Frames entre chaque génération
+    let mut speed = 6; // Frames entre chaque génération
     
     loop {
         clear_background(BLACK);
@@ -164,6 +165,18 @@ async fn main() {
 
         if is_key_pressed(KeyCode::C) {
             grid.clear();
+        }
+
+        if is_key_pressed(KeyCode::KpAdd) {
+            // Augmenter la vitesse (diminuer le délai)
+            if speed > 1 {
+                speed -= 1;
+            }
+        }
+
+        if is_key_pressed(KeyCode::KpSubtract) {
+            // Diminuer la vitesse (augmenter le délai)
+            speed += 1;
         }
 
         // Dessiner avec la souris
@@ -208,7 +221,7 @@ async fn main() {
         );
         draw_text("ESPACE: Play/Pause", 10.0, 40.0, 16.0, LIGHTGRAY);
         draw_text("R: Aléatoire | C: Effacer", 10.0, 56.0, 16.0, LIGHTGRAY);
-        draw_text("N: Étape suivante | Souris: Dessiner", 10.0, 72.0, 16.0, LIGHTGRAY);
+        draw_text("N: Étape suivante | Souris: Dessiner | +/-: Accélérer/Ralentir", 10.0, 72.0, 16.0, LIGHTGRAY);
 
         next_frame().await
     }
