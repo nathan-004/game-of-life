@@ -127,8 +127,9 @@ impl Grid {
 fn window_conf() -> Conf {
     Conf {
         window_title: "Jeu de la vie de Conway".to_owned(),
-        window_width: (WIDTH as f32 * CELL_SIZE) as i32,
-        window_height: (HEIGHT as f32 * CELL_SIZE + GRID_OFFSET_Y) as i32,
+        //window_width: (WIDTH as f32 * CELL_SIZE) as i32,
+        //window_height: (HEIGHT as f32 * CELL_SIZE + GRID_OFFSET_Y) as i32,
+        fullscreen: true,
         ..Default::default()
     }
 }
@@ -144,6 +145,10 @@ async fn main() {
         clear_background(BLACK);
 
         // Gestion des entrées
+        if is_key_pressed(KeyCode::Escape) {
+            break;
+        }
+
         if is_key_pressed(KeyCode::Space) {
             paused = !paused;
         }
