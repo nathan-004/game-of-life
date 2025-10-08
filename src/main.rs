@@ -1,6 +1,7 @@
 use std::io::{self, Write};
+use std::fs::File;
 
-use macroquad::prelude::*;
+use macroquad::{file, prelude::*};
 
 const WIDTH: usize = 150;
 const HEIGHT: usize = 75;
@@ -123,6 +124,19 @@ impl Grid {
             }
         }
     }
+
+    fn save_to_file(&self, filename: &str) -> io::Result<()> {
+        let mut file = File::create(filename)?;
+
+        writeln!(file, "{}", WIDTH)?; // stock width at start
+        let str_grid: String = self.cells.iter()
+            .flat_map(|row| row.iter().map(|&cell| if cell { '1' } else { '0' }))
+            .collect();
+        
+        writeln!(file, "{}", str_grid)?;
+
+        Ok(())
+    }
 }
 
 fn window_conf() -> Conf {
@@ -165,6 +179,10 @@ async fn main() {
 
         if is_key_pressed(KeyCode::C) {
             grid.clear();
+        }
+
+        if is_key_pressed(KeyCode::S) {
+            let _ = grid.save_to_file("save");
         }
 
         if is_key_pressed(KeyCode::KpAdd) {
@@ -231,7 +249,7 @@ async fn main() {
             20.0,
             GREEN,
         );
-        draw_text("ESPACE: Play/Pause", 10.0, 40.0, 16.0, LIGHTGRAY);
+        draw_text("ESPACE: Play/Pause | Esc: Quitter", 10.0, 40.0, 16.0, LIGHTGRAY);
         draw_text("R: Aléatoire | C: Effacer", 10.0, 56.0, 16.0, LIGHTGRAY);
         draw_text("N: Étape suivante | Souris: Dessiner | +/-: Accélérer/Ralentir", 10.0, 72.0, 16.0, LIGHTGRAY);
 
