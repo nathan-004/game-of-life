@@ -1,5 +1,5 @@
 use std::io::{self, Write};
-use std::fs::File;
+use std::fs::{self, File};
 
 use macroquad::{file, prelude::*};
 
@@ -137,6 +137,25 @@ impl Grid {
 
         Ok(())
     }
+
+    fn load_from_file(&mut self, filename: &str) -> std::io::Result<()> {
+        let content = fs::read_to_string(filename)?;
+        let mut lines = content.lines();
+
+        let width: usize = lines.next().unwrap_or("").parse().unwrap_or(WIDTH);
+
+        if let Some(grid_str) = lines.next() {
+            for (i, c) in grid_str.chars().enumerate() {
+                let y = i / width;
+                let x = i % width;
+                if y < HEIGHT && x < WIDTH {
+                    self.cells[y][x] = c == '1';
+                }
+            }
+        }
+
+        Ok(())
+    }
 }
 
 fn window_conf() -> Conf {
@@ -183,6 +202,10 @@ async fn main() {
 
         if is_key_pressed(KeyCode::S) {
             let _ = grid.save_to_file("save");
+        }
+
+        if is_key_pressed(KeyCode::L) {
+            let _ = grid.load_from_file("save");
         }
 
         if is_key_pressed(KeyCode::KpAdd) {
@@ -250,7 +273,7 @@ async fn main() {
             GREEN,
         );
         draw_text("ESPACE: Play/Pause | Esc: Quitter", 10.0, 40.0, 16.0, LIGHTGRAY);
-        draw_text("R: Aléatoire | C: Effacer", 10.0, 56.0, 16.0, LIGHTGRAY);
+        draw_text("R: Aléatoire | C: Effacer | S: Sauvegarder | L: Enregistrer", 10.0, 56.0, 16.0, LIGHTGRAY);
         draw_text("N: Étape suivante | Souris: Dessiner | +/-: Accélérer/Ralentir", 10.0, 72.0, 16.0, LIGHTGRAY);
 
         next_frame().await
