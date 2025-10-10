@@ -1,0 +1,10 @@
+- [X] Sauvegarde et chargement de la grille
+- [ ] Sélection de patterns prédéfinis
+- [ ] Zoom et déplacement de la grille
+- [ ] Personnalisation des couleurs
+- [ ] Affichage du nombre de générations et de cellules vivantes
+- [ ] Undo/Redo
+- [ ] Mode édition avancé
+- [ ] Ajustement dynamique de la taille de la grille
+- [ ] Contrôle de la vitesse par slider
+- [ ] Export d'image ou de gif
