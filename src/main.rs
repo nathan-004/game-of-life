@@ -13,6 +13,8 @@ const INFINITE_GROW:[(usize,  usize); 10] = [(6, 0), (4, 1), (6, 1), (7, 1), (4,
 const LWSS:[(usize, usize); 9] = [(1, 0), (4, 0), (0, 1), (0, 2), (4, 2), (0, 3), (1, 3), (2, 3), (3, 3)];
 const GLIDER:[(usize, usize); 5] = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
 
+const PATTERNS: [&[(usize, usize)]; 3] = [&GLIDER, &INFINITE_GROW, &LWSS];
+
 struct Grid {
     cells: Vec<Vec<bool>>,
 }
@@ -245,30 +247,14 @@ async fn main() {
             }
         }
 
-        if is_key_pressed(KeyCode::F1) {
-            let (mx, my) = mouse_position();
-            let grid_x = (mx / CELL_SIZE) as usize;
-            let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
-            if grid_x < WIDTH && grid_y < HEIGHT {
-                grid.set_cells(grid_x, grid_y, &GLIDER);
-            }
-        }
-
-        if is_key_pressed(KeyCode::F2) {
-            let (mx, my) = mouse_position();
-            let grid_x = (mx / CELL_SIZE) as usize;
-            let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
-            if grid_x < WIDTH && grid_y < HEIGHT {
-                grid.set_cells(grid_x, grid_y, &INFINITE_GROW);
-            }
-        }
-
-        if is_key_pressed(KeyCode::F3) {
-            let (mx, my) = mouse_position();
-            let grid_x = (mx / CELL_SIZE) as usize;
-            let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
-            if grid_x < WIDTH && grid_y < HEIGHT {
-                grid.set_cells(grid_x, grid_y, &LWSS);
+        for (i, key) in [KeyCode::F1, KeyCode::F2, KeyCode::F3].iter().enumerate() {
+            if is_key_pressed(*key) {
+                let (mx, my) = mouse_position();
+                let grid_x = (mx / CELL_SIZE) as usize;
+                let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
+                if grid_x < WIDTH && grid_y < HEIGHT {
+                    grid.set_cells(grid_x, grid_y, PATTERNS[i]);
+                }
             }
         }
 
