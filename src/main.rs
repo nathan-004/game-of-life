@@ -8,6 +8,11 @@ const HEIGHT: usize = 75;
 const CELL_SIZE: f32 = 10.0;
 const GRID_OFFSET_Y: f32 = 100.0;
 
+// Patterns
+const INFINITE_GROW:[(usize,  usize); 10] = [(6, 0), (4, 1), (6, 1), (7, 1), (4, 2), (6, 2), (4, 3), (2, 4), (0, 5), (2, 5)];
+const LWSS:[(usize, usize); 9] = [(1, 0), (4, 0), (0, 1), (0, 2), (4, 2), (0, 3), (1, 3), (2, 3), (3, 3)];
+const GLIDER:[(usize, usize); 5] = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
+
 struct Grid {
     cells: Vec<Vec<bool>>,
 }
@@ -145,11 +150,6 @@ impl Grid {
             self.cells[new_y][new_x] = true;
         }
     }
-
-    fn add_glider(&mut self, x:usize, y:usize) {
-        let coords = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
-        self.set_cells(x, y, &coords);
-    }
 }
 
 fn window_conf() -> Conf {
@@ -202,10 +202,6 @@ async fn main() {
             let _ = grid.load_from_file("save");
         }
 
-        if is_key_pressed(KeyCode::G) {
-
-        }
-
         if is_key_pressed(KeyCode::KpAdd) {
             // Augmenter la vitesse (diminuer le délai)
             if speed > 1 {
@@ -249,12 +245,30 @@ async fn main() {
             }
         }
 
-        if is_key_pressed(KeyCode::G) {
+        if is_key_pressed(KeyCode::F1) {
             let (mx, my) = mouse_position();
             let grid_x = (mx / CELL_SIZE) as usize;
             let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
             if grid_x < WIDTH && grid_y < HEIGHT {
-                grid.add_glider(grid_x, grid_y);
+                grid.set_cells(grid_x, grid_y, &GLIDER);
+            }
+        }
+
+        if is_key_pressed(KeyCode::F2) {
+            let (mx, my) = mouse_position();
+            let grid_x = (mx / CELL_SIZE) as usize;
+            let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
+            if grid_x < WIDTH && grid_y < HEIGHT {
+                grid.set_cells(grid_x, grid_y, &INFINITE_GROW);
+            }
+        }
+
+        if is_key_pressed(KeyCode::F3) {
+            let (mx, my) = mouse_position();
+            let grid_x = (mx / CELL_SIZE) as usize;
+            let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
+            if grid_x < WIDTH && grid_y < HEIGHT {
+                grid.set_cells(grid_x, grid_y, &LWSS);
             }
         }
 
@@ -280,7 +294,7 @@ async fn main() {
             GREEN,
         );
         
-        draw_text("ESPACE: Play/Pause | Esc: Quitter", 10.0, 40.0, 16.0, LIGHTGRAY);
+        draw_text("ESPACE: Play/Pause | Esc: Quitter | F1 - F3 : Patterns prédéfinis", 10.0, 40.0, 16.0, LIGHTGRAY);
         draw_text("R: Aléatoire | C: Effacer | S: Sauvegarder | L: Enregistrer", 10.0, 56.0, 16.0, LIGHTGRAY);
         draw_text("N: Étape suivante | Souris: Dessiner | +/-: Accélérer/Ralentir", 10.0, 72.0, 16.0, LIGHTGRAY);
 
