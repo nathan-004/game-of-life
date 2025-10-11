@@ -1,8 +1,7 @@
-use std::array;
 use std::io::{self, Write};
 use std::fs::{self, File};
 
-use macroquad::{file, prelude::*};
+use macroquad::{prelude::*};
 
 const WIDTH: usize = 150;
 const HEIGHT: usize = 75;
@@ -86,27 +85,6 @@ impl Grid {
         }
         
         self.cells = new_cells;
-    }
-
-    // Afficher la grille
-    fn display_console(&self) {
-        // Effacer l'écran (ANSI escape codes)
-        print!("\x1B[2J\x1B[1;1H");
-        
-        println!("╔{}╗", "═".repeat(WIDTH));
-        
-        for row in &self.cells {
-            print!("║");
-            for &cell in row {
-                print!("{}", if cell { "█" } else { " " });
-            }
-            println!("║");
-        }
-        
-        println!("╚{}╝", "═".repeat(WIDTH));
-        println!("Jeu de la vie de Conway - Appuyez sur Ctrl+C pour quitter");
-        
-        io::stdout().flush().unwrap();
     }
 
     fn draw(&self) {
@@ -252,15 +230,6 @@ async fn main() {
             speed += 1;
         }
 
-        if is_key_pressed(KeyCode::G) {
-            let (mx, my) = mouse_position();
-            let grid_x = (mx / CELL_SIZE) as usize;
-            let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
-            if grid_x < WIDTH && grid_y < HEIGHT {
-                grid.add_glider(grid_x, grid_y);
-            }
-        }
-
         // Dessiner avec la souris
         if is_mouse_button_down(MouseButton::Left) {
             let (mx, my) = mouse_position();
@@ -277,6 +246,15 @@ async fn main() {
             let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
             if grid_x < WIDTH && grid_y < HEIGHT {
                 grid.cells[grid_y][grid_x] = false;
+            }
+        }
+
+        if is_key_pressed(KeyCode::G) {
+            let (mx, my) = mouse_position();
+            let grid_x = (mx / CELL_SIZE) as usize;
+            let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
+            if grid_x < WIDTH && grid_y < HEIGHT {
+                grid.add_glider(grid_x, grid_y);
             }
         }
 
