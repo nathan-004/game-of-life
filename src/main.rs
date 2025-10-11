@@ -1,3 +1,4 @@
+use std::array;
 use std::io::{self, Write};
 use std::fs::{self, File};
 
@@ -158,6 +159,21 @@ impl Grid {
     }
 }
 
+impl Grid {
+    fn set_cells(&mut self, x:usize, y:usize, coords:&[(usize, usize)]) {
+        for (dx, dy) in coords {
+            let new_x = (x + dx) % WIDTH;
+            let new_y = (y + dy) % HEIGHT;
+            self.cells[new_y][new_x] = true;
+        }
+    }
+
+    fn add_glider(&mut self, x:usize, y:usize) {
+        let coords = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
+        self.set_cells(x, y, &coords);
+    }
+}
+
 fn window_conf() -> Conf {
     Conf {
         window_title: "Jeu de la vie de Conway".to_owned(),
@@ -208,6 +224,10 @@ async fn main() {
             let _ = grid.load_from_file("save");
         }
 
+        if is_key_pressed(KeyCode::G) {
+
+        }
+
         if is_key_pressed(KeyCode::KpAdd) {
             // Augmenter la vitesse (diminuer le délai)
             if speed > 1 {
@@ -230,6 +250,15 @@ async fn main() {
         if is_key_pressed(KeyCode::Down) {
             // Diminuer la vitesse (augmenter le délai)
             speed += 1;
+        }
+
+        if is_key_pressed(KeyCode::G) {
+            let (mx, my) = mouse_position();
+            let grid_x = (mx / CELL_SIZE) as usize;
+            let grid_y = ((my - GRID_OFFSET_Y) / CELL_SIZE) as usize;
+            if grid_x < WIDTH && grid_y < HEIGHT {
+                grid.add_glider(grid_x, grid_y);
+            }
         }
 
         // Dessiner avec la souris
@@ -279,4 +308,6 @@ async fn main() {
 
         next_frame().await
     }
+
+    let _ = grid.save_to_file("save");
 }
